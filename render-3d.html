@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scheda prodotto - Manopola 3D</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Inter,system-ui,sans-serif;
+}
+
+body{
+background:#f3f3f3;
+}
+
+.container{
+display:grid;
+grid-template-columns:1fr 420px;
+min-height:100vh;
+}
+
+.left{
+background:#e9e9e9;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+position:relative;
+overflow: hidden;
+}
+
+#canvas-container {
+width:100%;
+height:500px;
+position:relative;
+z-index:1;
+background:transparent;
+border-radius:15px;
+box-shadow:0 10px 30px rgba(0,0,0,0.1);
+}
+
+.editor-btn{
+margin-top:20px;
+background:#73b693;
+color:white;
+padding:16px 40px;
+border-radius:30px;
+border:none;
+font-weight:600;
+letter-spacing:1px;
+cursor:pointer;
+}
+
+.right{
+background:white;
+padding:60px 50px;
+}
+
+h1{
+font-size:34px;
+color:#2c3640;
+}
+
+.subtitle{
+font-size:26px;
+color:#5d6a73;
+margin-bottom:30px;
+}
+
+.section-title{
+font-size:12px;
+letter-spacing:2px;
+color:#9aa3a8;
+margin-top:30px;
+margin-bottom:12px;
+}
+
+.description{
+line-height:1.6;
+color:#5a646c;
+font-size:14px;
+}
+
+.description strong{
+color:#148a50;
+}
+
+.price{
+font-size:34px;
+color:#148a50;
+font-weight:700;
+margin-top:10px;
+}
+
+.select{
+width:100%;
+padding:14px;
+border:1px solid #ddd;
+margin-top:8px;
+margin-bottom:20px;
+}
+
+.row{
+display:flex;
+gap:15px;
+}
+
+.qty{
+width:100px;
+padding:14px;
+border:1px solid #ddd;
+}
+
+.add{
+flex:1;
+background:#148a50;
+color:white;
+border:none;
+font-weight:600;
+letter-spacing:1px;
+cursor:pointer;
+}
+
+.footer-links{
+display:flex;
+gap:30px;
+margin-top:60px;
+font-size:12px;
+color:#6c757d;
+}
+
+.controls-hint{
+position:absolute;
+bottom:20px;
+left:50%;
+transform:translateX(-50%);
+background:rgba(0,0,0,0.7);
+padding:10px 20px;
+border-radius:20px;
+font-size:0.85rem;
+color:#aaa;
+z-index:10;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="left">
+
+<div id="canvas-container">
+<div class="controls-hint">🖱️ Trascina per ruotare 360°</div>
+</div>
+
+<button class="editor-btn">ACCEDI ALL'EDITOR</button>
+
+</div>
+
+<div class="right">
+
+<h1>Manopola</h1>
+<div class="subtitle">Industriale</div>
+
+<div class="section-title">DETTAGLI</div>
+
+<p class="description">
+<strong>Design ergonomico</strong> per una presa comoda e sicura.<br><br>
+<strong>Materiale</strong> in tecnopolimero ad alta resistenza,
+ideale per applicazioni industriali e automotive.<br><br>
+<strong>Montaggio</strong> rapido con sistema di fissaggio standard.
+</p>
+
+<div class="section-title">PREZZO</div>
+<div class="price">RICHIEDI PREVENTIVO</div>
+
+<div class="section-title">COLORE</div>
+
+<select class="select">
+<option value="NERO">NERO</option>
+<option value="GRIGIO">GRIGIO</option>
+<option value="BLU">BLU</option>
+<option value="ROSSO">ROSSO</option>
+<option value="VERDE">VERDE</option>
+</select>
+
+<div class="section-title">QUANTITÀ</div>
+
+<div class="row">
+
+<select class="qty">
+<option>01</option>
+<option>02</option>
+<option>03</option>
+<option>04</option>
+</select>
+
+<button class="add">
+AGGIUNGI ALLA LISTA
+</button>
+
+</div>
+
+<div class="footer-links">
+<span>SCHEDA TECNICA</span>
+<span>DISEGNI 2D/3D</span>
+<span>TORNA INDIETRO</span>
+</div>
+
+</div>
+</div>
+
+<script>
+
+// --- SCENA 3D ---
+const container=document.getElementById('canvas-container');
+const scene=new THREE.Scene();
+scene.background=null;
+
+const camera=new THREE.PerspectiveCamera(45,container.clientWidth/container.clientHeight,0.1,1000);
+camera.position.set(0,0,8);
+
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setSize(container.clientWidth,container.clientHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setClearColor(0x000000,0);
+container.insertBefore(renderer.domElement,container.firstChild);
+
+const controls=new THREE.OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;
+controls.autoRotate=true;
+controls.autoRotateSpeed=1;
+controls.minPolarAngle=0;
+controls.maxPolarAngle=Math.PI;
+
+// Luci
+const ambientLight=new THREE.AmbientLight(0xffffff,0.6);
+scene.add(ambientLight);
+
+const mainLight=new THREE.DirectionalLight(0xffffff,1);
+mainLight.position.set(5,10,5);
+mainLight.castShadow=true;
+scene.add(mainLight);
+
+const fillLight=new THREE.DirectionalLight(0x00a8cc,0.3);
+fillLight.position.set(-5,5,-5);
+scene.add(fillLight);
+
+// --- CREAZIONE MANOPOLA 3D COMPLETA ---
+const knobGroup=new THREE.Group();
+
+// 1. Corpo principale (cilindro)
+const bodyGeometry=new THREE.CylinderGeometry(2,2.2,1.5,64);
+const bodyMaterial=new THREE.MeshStandardMaterial({
+    color:0x1a1a1a,
+    roughness:0.3,
+    metalness:0.1
+});
+const body=new THREE.Mesh(bodyGeometry,bodyMaterial);
+body.castShadow=true;
+body.receiveShadow=true;
+knobGroup.add(body);
+
+// 2. Ghiera superiore
+const rimGeometry=new THREE.CylinderGeometry(1.8,2,0.3,64);
+const rimMaterial=new THREE.MeshStandardMaterial({
+    color:0x333333,
+    roughness:0.2,
+    metalness:0.5
+});
+const rim=new THREE.Mesh(rimGeometry,rimMaterial);
+rim.position.y=0.85;
+knobGroup.add(rim);
+
+// 3. Ghiera inferiore
+const bottomRim=new THREE.Mesh(rimGeometry,rimMaterial);
+bottomRim.position.y=-0.85;
+knobGroup.add(bottomRim);
+
+// 4. Indicatori (linee sulla superficie)
+const indicatorGeometry=new THREE.BoxGeometry(0.1,0.8,0.05);
+const indicatorMaterial=new THREE.MeshStandardMaterial({
+    color:0x00a8cc,
+    emissive:0x00a8cc,
+    emissiveIntensity:0.5
+});
+
+for(let i=0;i<12;i++){
+    const angle=(i/12)*Math.PI*2;
+    const indicator=new THREE.Mesh(indicatorGeometry,indicatorMaterial);
+    indicator.position.x=Math.sin(angle)*1.6;
+    indicator.position.z=Math.cos(angle)*1.6;
+    indicator.position.y=0.76;
+    indicator.rotation.y=-angle;
+    knobGroup.add(indicator);
+}
+
+// 5. Puntatore centrale
+const pointerGeometry=new THREE.ConeGeometry(0.15,0.5,32);
+const pointerMaterial=new THREE.MeshStandardMaterial({
+    color:0xff4444,
+    emissive:0xff4444,
+    emissiveIntensity:0.3
+});
+const pointer=new THREE.Mesh(pointerGeometry,pointerMaterial);
+pointer.position.y=1.2;
+pointer.rotation.x=Math.PI;
+knobGroup.add(pointer);
+
+// 6. Foro centrale
+const holeGeometry=new THREE.CylinderGeometry(0.3,0.3,0.2,32);
+const holeMaterial=new THREE.MeshStandardMaterial({
+    color:0x666666,
+    roughness:0.5,
+    metalness:0.8
+});
+const hole=new THREE.Mesh(holeGeometry,holeMaterial);
+hole.position.y=0.8;
+knobGroup.add(hole);
+
+// 7. Base dentellata (per aderenza)
+for(let i=0;i<36;i++){
+    const angle=(i/36)*Math.PI*2;
+    const dentGeometry=new THREE.BoxGeometry(0.15,1.6,0.1);
+    const dent=new THREE.Mesh(dentGeometry,bodyMaterial);
+    dent.position.x=Math.sin(angle)*2.1;
+    dent.position.z=Math.cos(angle)*2.1;
+    dent.position.y=0;
+    dent.rotation.y=-angle;
+    knobGroup.add(dent);
+}
+
+scene.add(knobGroup);
+
+// --- CAMBIO COLORE ---
+const colorSelect=document.querySelector(".select");
+
+const colorMap={
+    "NERO":0x1a1a1a,
+    "GRIGIO":0x777777,
+    "BLU":0x0055ff,
+    "ROSSO":0xff0000,
+    "VERDE":0x00aa00
+};
+
+colorSelect.addEventListener("change",function(){
+    const colorValue=colorMap[this.value];
+    if(colorValue){
+        bodyMaterial.color.set(colorValue);
+        rimMaterial.color.set(colorValue);
+        bottomRimMaterial.color.set(colorValue);
+    }
+});
+
+// --- ANIMAZIONE ---
+function animate(){
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene,camera);
+}
+
+animate();
+
+// --- RESIZE ---
+window.addEventListener('resize',()=>{
+    camera.aspect=container.clientWidth/container.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(container.clientWidth,container.clientHeight);
+});
+
+</script>
+
+</body>
+</html>
